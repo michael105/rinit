@@ -1,0 +1,12 @@
+#!/bin/sh
+
+while [ ! -e /dev ] || [ -z $loop ] 
+do 
+		echo loop
+		/etc/rinit/bin/usleep 100000
+		loop=1
+done
+
+echo ok
+
+

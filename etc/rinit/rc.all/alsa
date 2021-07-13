@@ -1,0 +1,11 @@
+#!/bin/sh
+
+
+( 
+# sleep 1
+# modprobe snd-hda-intel
+# chmod a+rw /dev/snd/*
+# echo 1 > /rd/run/mod_alsa
+ #rd.note mod_alsa
+) &
+

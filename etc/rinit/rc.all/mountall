@@ -1,0 +1,20 @@
+#!/bin/sh
+
+
+echo Mounting Filesystems
+
+( 
+
+swapon /dev/sda12
+mount /dev/sda11 /home
+
+sleep 3
+echo setup chroot
+cd /home/arch
+sh ./chroot.sh
+mount -o bind /home ./home
+
+) &
+
+
+

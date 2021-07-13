@@ -1,0 +1,18 @@
+#!/bin/sh
+
+
+( 
+modprobe psmouse
+modprobe ehci_pci
+modprobe xhci_pci
+modprobe usb-storage
+modprobe snd-hda-intel
+#chmod a+rw /dev/input/*  
+#echo 1 > /rd/run/mod_mouse
+#modprobe tg3 && echo 1 > /rd/run/mod_eth
+#modprobe ohci_hcd
+#modprobe ohci_pci
+modprobe fuse
+) &
+
+

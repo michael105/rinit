@@ -1,0 +1,8 @@
+#!/bin/sh
+
+(
+/sbin/udevrd 2> /dev/kmsg &
+#usleep 500
+#/sbin/udevadm trigger
+)&
+

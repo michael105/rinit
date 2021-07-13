@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# terminate all processes, which might need to save data back.
+# Wait until they did exit.
+# Kill them after n * granularity(milliseconds)
+# continue atfer 2*n*granularity, if processes still didn't exit.
+# They are defined by the regular expression below
+
+PTERM='vim|example2'
+MOUNTS="/dev/sda8 /dev/sda13 /dev/sda11"
+n=6
+granularity=500000
+
+echo Sending SIGTERM to processes
+
+killall -r "$PTERM" 2>/dev/null
+kill `lsof -t $MOUNTS`2>/dev/null
+
+
+# wait. argument: x (wait x*1/2 seconds)
+function waitp(){
+		x=1
+		for i in `seq $1`
+		do
+				ps ax | sed -n -E "/sed/n;/$PTERM/q1" && ( lsof -t $MOUNTS; if [ $? = 0 ]; then false; else true;fi )
+				if [ $? = 1 ]; then
+						echo -n -
+						/etc/rinit/bin/usleep $granularity
+				else
+						x=0
+						break
+				fi
+		done 
+		return $x
+}
+
+waitp $n
+
+if [ $? = 1 ]; then
+		echo Processes with no response:
+		ps ax | sed -n -E "1p;/sed/n;/$PTERM/p"  
+		lsof $MOUNTS
+
+		echo
+		echo sending SIGKILL
+		killall -s SIGKILL -r "$PTERM" 2>/dev/null
+		kill -KILL `lsof -t $MOUNTS` 2>/dev/null
+		waitp $(( 2 * $n ))
+		if [ $? = 1 ]; then
+				echo Unresponding processes:
+				ps ax | sed -n -E "1p;/sed/n;/$PTERM/p"
+				echo Continuing
+		else
+				echo All processes killed
+		fi
+else
+		echo All processes terminated
+fi
+
+
+

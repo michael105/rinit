@@ -1,0 +1,5 @@
+#!/bin/sh
+
+rd.wait eth0
+krb5kdc -n 2>&1 > /var/log/krb5kdc &
+

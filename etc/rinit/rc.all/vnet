@@ -1,0 +1,8 @@
+#!/bin/sh
+
+
+
+ip link add veth0 type veth peer name veth1
+ifconfig veth1 192.168.8.1
+#root / # ifconfig veth0 192.168.8.2
+

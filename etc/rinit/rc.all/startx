@@ -1,0 +1,21 @@
+#!/bin/sh
+export PATH="/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin"
+
+echo --- Start XServer
+
+(
+#echo X: Wait for mouse
+#/etc/rinit/bin/catc /rd/run/mod_mouse
+rd.wait mod_mouse
+# wait for /home
+rd.wait home
+#echo X: ok
+
+#chmod a+rw /dev/input/*
+
+export HOME=/home/micha
+#export USER=micha
+#export USER_ID=1000
+
+/etc/rinit/bin/udo -u 1000 -g 1000 -G 10,18,103,97 "source /home/micha/.profile; /usr/bin/startx" 2>/var/log/Xorg.log.stderr &
+) &

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+(
+rd.wait mod_eth
+ifconfig eth0 192.168.4.2 || ifconfig enp2s1 192.168.4.2
+while [ $? != 0 ]
+do
+		sleep 1
+		ifconfig eth0 192.168.4.2 || ifconfig enp2s1 192.168.4.2
+done
+rd.note eth0
+route add default gw 192.168.4.1 ) &
+

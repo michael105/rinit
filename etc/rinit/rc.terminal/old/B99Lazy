@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# wait for a file /tmp/runlazy,
+# run all scripts, starting with L afterwards
+
+
+(
+#while [ ! -e /tmp/runlazy ]
+#do
+#		sleep 1
+#done
+
+for i in /etc/rinit/rc.boot/L*
+do
+		echo `basename $i`
+		eval $i
+done
+
+
+for i in /etc/rinit/rc.terminal/L*
+do
+		echo `basename $i`
+		eval $i
+done
+
+)&
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+
+echo Mounting Filesystems
+
+( 
+/etc/rinit/bin/mount -t reiserfs /dev/sda8 /hd/sda8
+/etc/rinit/bin/mount -t reiserfs /dev/sda13 /hd/sda13
+cd /hd/sda8
+sh ./chroot
+) &
+
+
+

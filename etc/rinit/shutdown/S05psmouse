@@ -1,0 +1,6 @@
+#!/bin/sh
+
+
+# showed up here, when not removing this module,
+# sometimes the touchpad will not work at the next boot.
+rmmod psmouse

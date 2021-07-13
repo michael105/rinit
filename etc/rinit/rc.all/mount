@@ -1,0 +1,26 @@
+#!/bin/sh
+
+/etc/rinit/bin/mount -t proc none /proc
+/etc/rinit/bin/mount -t sysfs none /sys
+/etc/rinit/bin/mount -t devtmpfs none /dev
+
+
+
+(
+
+( 
+
+/etc/rinit/bin/mount -t tmpfs none /tmp
+#/etc/rinit/bin/mount -t f2fs /dev/sda11 /home
+ echo 1 > /rd/run/home) &
+
+mkdir /dev/pts 2>/dev/null
+mkdir /dev/shm 2>/dev/null
+
+/etc/rinit/bin/mount -t tmpfs none /run
+/etc/rinit/bin/mount -t devpts none /dev/pts
+/etc/rinit/bin/mount -t tmpfs none /dev/shm
+
+)&
+
+

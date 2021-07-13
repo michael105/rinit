@@ -1,0 +1,14 @@
+#!/bin/sh
+
+(
+for i in `seq 2 6`
+do
+		( while true
+		do
+				#echo $CYAN " --- $NORM"`hostname`" - " `date` "\n"
+				/sbin/agetty 38400 tty$i linux
+				sleep 1
+		done )&
+done
+) &
+

@@ -1,0 +1,67 @@
+#!/bin/sh
+
+# list all mounted fs, ordered by length of path, excluding: / /rd(.*) /proc /dev
+function mounted(){
+	echo -n `sed -E '/^\S*( \/ )|( \/ )|( \/dev )|( \/rd)|( \/proc )|( \/rd\/mnt)/d;s/^\S* (\S*).*/(echo "\1"|wc -c|tr "\n" " ";echo \1) /e' /proc/mounts |\
+			sort -nr | uniq | sed 's/^\S* //'`
+}
+
+
+echo " --- Sync"
+
+sync
+sync
+
+echo " --- Unmount filesystems"
+
+for i in `mounted`
+do
+		echo -n "$i "
+		umount $i 2>/dev/null
+done
+
+for i in `mounted`
+do
+		echo -n "$i "
+		umount -f -r $i 2>/dev/null
+done
+
+
+for i in `mounted`
+do
+		echo -n "$i "
+		umount -l $i 
+		#2>/dev/null
+done
+#echo --- Still mounted
+#mount
+for i in `mounted`
+do
+		echo -n "$i "
+		mount -o remount,ro $i 
+		#2>/dev/null
+done
+
+
+#readkey -w 10 x -
+
+echo " --- Remount root readonly"
+
+#for i in `mount | sed -nE 's/^\S* on (\S*) type .*/\1/p' | sort -r`
+#do
+#		echo -n "$i "
+#		umount -l $i
+#done
+echo
+mount -o remount,ro /
+mount
+umount -f -r / 
+umount -l / 
+
+echo Shutdown in 5 seconds
+readkey -w 20 -d 2 -x -
+#sleep 3
+echo
+
+
+

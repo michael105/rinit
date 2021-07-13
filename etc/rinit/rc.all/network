@@ -1,0 +1,20 @@
+#!/bin/sh
+
+
+hostname laptop
+
+ifconfig lo 127.0.0.1
+
+(
+while [ -e /run/notmounted ]; do
+		usleep 50000
+done
+
+echo 0 999999 > /proc/sys/net/ipv4/ping_group_range
+
+ip netns add root
+ip link add core type veth peer name veth
+ip link set netns root core
+ifconfig veth 10.0.0.1
+ip netns exec root ifconfig core 10.0.0.2
+)&
