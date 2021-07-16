@@ -1,7 +1,10 @@
 work in progress, not finished.
 
+Documentation needs to be written,
+the init scripts are subject to changes.
 
-A minimal init. 
+
+#### A minimal init. 
 
 progress: boottime is around 2seconds from grub to the fully up and running system,
 running Xorg, i3, http proxy server, ssh server, dns proxy, separation into several containers,
@@ -27,10 +30,11 @@ in order to "reap" the children's process state.
 Having a tiny init (or another subreaper process) has real and enduring performance advantages,
 also energy savings)
 
-Readahead should be implemented by the stages.
+Readahead could be implemented by the stages,
+but didn't speed up here. (Using 'lockfile' from minicore, but with a ssd)
 
-I'm about to convert the init scripts to C files,
-and I'm heavily tempted to rule an init language.
+I'm heavily tempted to rule sort of an init language.
+Or something like usable routines for C.
 Atm the kernel's init phase takes most time.
 However, I'd like to have the system ready within <1 second.
 (Ready in the meaning of, the X server is started and ready for input)
@@ -41,7 +45,7 @@ Harddisk mounts, and module loads are done in the background,
 after X and the desktop manager(i3) has been started.
 
 As soon as this get's closer to 1 second, it will be possible 
-to measure the script's parsing overhead.
+to measure the script parsing overhead.
 Atm, it is neglectible.
 
 
@@ -51,24 +55,31 @@ Atm, it is neglectible.
 Subject to change.
 
 For now, init starts 
-/etc/rinit/1 
+/etc/rinit/rd.boot
+whichruns all scripts in /etc/rinit/rc.boot, starting with 'B'.
 
-and runs and restarts when exiting
-/etc/rinit/2
+Afterwards, 
+/etc/rinit/rd.run runlevel
+is executed and all scripts in /etc/rinit/rc.runlevel,
+starting with 'B' are executed.
+B99Lazy waits for the file /tmp/runlazy,
+when this has been created (I touch it from the config file of i3),
+all scripts, starting with 'L', are executed in order.
 
 Halt/reboot is /etc/rinit/3
 
-This follows the runit scheme.
+The stages name's are defined in config.h
 
 
 on signals SIGINT, Ctrl+Alt+Del (->reboot) and SIGTERM (->shutdown)
-/etc/rinit/2 is sent SIGTERM, when not responding SIGKILL,
+/etc/rinit/rd.run is sent SIGTERM, when not responding SIGKILL,
 and after it's termination
 /etc/rinit/3 is executed.
 
 
 For a shutdown do "killall init",
 for a reboot "killall -s SIGINT init" (or Ctrl-Alt-Del)
+(Or use the programs 'halt' and 'reboot').
 
 When sent SIGQUIT, the currently running stage is signalled with SIGTERM.
 When the currently running stages are either 1 or 2, when the processes exit,
@@ -82,23 +93,18 @@ it's assumed the process is zombified and stage 3 or
 the reboot/halt executed.
 
 
-The scripts 1,2,3 and the init scripts I'm using, are working, but subject to change.
+The init scripts I'm using, are working, but subject to change.
 I'm using a stripped down sh interpreter of busybox.
 
 However, the forks for every executed program on boot seem to have their price.
 Albite bootup time is below 1 second. (Notebook Amd Turion 2GHz, built 2005)
 
-I guess I'm going to integrate the minicore tools into the start scripts, 
-and rewrite 1 and 2 as C programs. 
-
 The bootscripts aren't tidied, there are some instructions left, 
 I fiddled around with syncronization.
 Showed up, no sync is needed.
-To be more exact, even stage 2 is not really needed.
+To be more exact, even stage 2 is not really needed,
+it is yet mainly there to keep a login at tty1 open.
 I leave this as it is for now.
-And upload this into the branch devel of minilib,
-since it is in development.
-
 
 
 

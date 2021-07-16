@@ -2,7 +2,7 @@
 # minilib configuration
 
 COMPILE start,writes,vfork,execve,sleep,exit,waitpid,prints,printsl,sigaction,\
-			  sigaddset,sigemptyset,sigfillset,raise
+			  sigaddset,sigemptyset,sigfillset,raise,setitimer,reboot,sync
 
 # debugging definitions
 # COMPILE printf,itodec; mini_buf 256
