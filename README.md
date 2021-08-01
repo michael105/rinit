@@ -6,7 +6,7 @@ the init scripts are subject to changes.
 
 #### A minimal init. 
 
-progress: boottime is around 2seconds from grub to the fully up and running system,
+progress: boottime is around 2 seconds from grub to the fully up and running system,
 running Xorg, i3, http proxy server, ssh server, dns proxy, separation into several containers,
 and kerberos. (kerberos for gaining root/sudo, the default user is 'autologged' in)
 
@@ -20,8 +20,7 @@ shutdown maybe 1/10 seconds.
 (terminating a list of programs like vi, to save data to disk,
 and unmounting mounts)
 
-
-
+##### About
 
 The small size (2.2kB) and using vfork do spare some resources.
 Especially, when considering context switches for reaping subprocesses.
@@ -31,7 +30,7 @@ Having a tiny init (or another subreaper process) has real and enduring performa
 also energy savings)
 
 Readahead could be implemented by the stages,
-but didn't speed up here. (Using 'lockfile' from minicore, but with a ssd)
+but didn't speed up here. (Using 'lockfile' from minicore, ssd)
 
 I'm heavily tempted to rule sort of an init language.
 Or something like usable routines for C.
@@ -47,6 +46,8 @@ after X and the desktop manager(i3) has been started.
 As soon as this get's closer to 1 second, it will be possible 
 to measure the script parsing overhead.
 Atm, it is neglectible.
+
+
 
 
 (2020/06)
@@ -176,6 +177,24 @@ and changed to, when needed.
 
 rinit.shutdown scans and runs rc.shutdown,
 as well as rc.runlevel/S\*
+
+
+
+
+In my opinion, having a small codebase, also read by other people, 
+is the biggest plus in the question of security.
+
+Especially for processes like init.
+
+Using minilib is a big advantage, since things like utf8 or localizations
+aren't useful at all for init, or the supervisor scripts/binaries.
+
+
+For having all used sources shown, simply type SHOWSOURCES=1 mini-gcc --config 'prog.c' 'prog.c'.
+
+The other advantage (I guess) is using clang.
+Gcc since version 10 quite often creates segfaulting binaries.
+I didn't find the cause yet. But might be some dark magic somewhere.
 
 
 

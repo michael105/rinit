@@ -1,10 +1,11 @@
-#define mini_start
-#define mini_kill
-#define mini_errno
-#define INCLUDESRC
-#include "minilib.h"
+#if 0
+COMPILE start kill
+LDSCRIPT textandbss
+INCLUDESRC
+
+return
+#endif
 
 int main(){
-	kill(1,SIGINT);
-	return(errno);
+	return( - kill(1,SIGINT) );
 }

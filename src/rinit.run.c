@@ -1,8 +1,8 @@
 #if 0
 # minilib configuration
-COMPILE start,printsl,fclose,strcpy,putenv,fopen,fgets,vexec,scandir,\
-			  strlen,ansicolors,free_brk,match,sleep,printfs,errno_str,errno,alphasort\
-			  strncpy
+COMPILE start,printsl,fclose,strcpy,putenv,fopen,fgets,vexec,scandir
+COMPILE strlen,ansicolors,free_brk,match,sleep,printfs,errno_str,errno,alphasort
+COMPILE strncpy,getbrk,brk,sbrk,getdents,raise,qsort
 
 mini_dirbuf_malloc malloc_brk
 mini_buf 512

@@ -1,4 +1,4 @@
-MCC=mini-gcc
+MCC=/home/micha/prog/minilib/mini-gcc
 APPEND="-DPWD=${PWD}"
 
 
@@ -24,10 +24,10 @@ rinit.boot: rinit.boot.c common.c config.h
 
 
 reboot: reboot.c
-		$(MCC) --shrinkelf -o reboot reboot.c
+		$(MCC) --shrinkelf --config reboot.c -o reboot reboot.c
 
 halt: halt.c
-		$(MCC) --shrinkelf -o halt halt.c
+		$(MCC) --shrinkelf --config halt.c -o halt halt.c
 
 install: init
 	sudo mv /sbin/init /sbin/init.bak2

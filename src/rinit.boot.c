@@ -3,6 +3,7 @@
 COMPILE start,printsl,fclose,strcpy,putenv,fopen,fgets,vexec,scandir,\
 			  strlen,ansicolors,free_brk,match,sleep,printfs,errno_str,errno,alphasort\
 			  strncpy
+mini_scandir
 mini_dirbuf_malloc malloc_brk
 mini_buf 512
 

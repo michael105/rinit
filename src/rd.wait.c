@@ -1,14 +1,5 @@
 #if 0
-mini_start
-mini_writes
-mini_open
-mini_read
-mini_exit_errno
-
-mini_usleep
-mini_strlcpy
-mini_strcpy
-
+COMPILE start,writes,open,read,exit_errno,usleep,strlcpy,strcpy,inotify_init,inotify_add_watch
 HEADERGUARDS
 OPTFLAG -Os
 #STRIPFLAG
