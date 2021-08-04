@@ -3,6 +3,8 @@ work in progress, not finished.
 Documentation needs to be written,
 the init scripts are subject to changes.
 
+I'm using this init however myself for more than one year.
+
 
 #### A minimal init. 
 
