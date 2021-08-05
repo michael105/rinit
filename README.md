@@ -1,6 +1,6 @@
 work in progress, not finished.
 
-Documentation needs to be written,
+Documentation needs to be (re)written,
 the init scripts are subject to changes.
 
 
@@ -9,8 +9,6 @@ I'm using this init however myself for more than one year.
 
 I guess, I'm finish this when I'm happy with the minimal linux system
 I'm working at.
-
-However, someone told me "release early, release often", so.
 
 
 
@@ -31,10 +29,12 @@ shutdown maybe 1/10 seconds.
 (terminating a list of programs like vi, to save data to disk,
 and unmounting mounts)
 
+
+
 ##### About
 
 Only one dependency for the static builds.
-I include minilib (www.github.com/michael105/minilib) as the headerfile minilib.h.
+I include minilib (www.github.com/michael105/minilib) as the combined script mini-gcc.
 
 The small size (2.2kB) and using vfork do spare some resources.
 Especially, when considering context switches for reaping subprocesses.
@@ -132,6 +132,8 @@ No proper install.
 
 busybox isn't included, 
 yet it doesn't compile with minilib.
+However the sh of busybox has the big advantage of 
+having most external programs included.
 
 Not possible yet to include other init systems.
 Just plain shell scripts.
