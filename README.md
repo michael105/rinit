@@ -3,7 +3,16 @@ work in progress, not finished.
 Documentation needs to be written,
 the init scripts are subject to changes.
 
+
+
 I'm using this init however myself for more than one year.
+
+I guess, I'm finish this when I'm happy with the minimal linux system
+I'm working at.
+
+However, someone told me "release early, release often", so.
+
+
 
 
 #### A minimal init. 
@@ -24,12 +33,18 @@ and unmounting mounts)
 
 ##### About
 
+Only one dependency for the static builds.
+I include minilib (www.github.com/michael105/minilib) as the headerfile minilib.h.
+
 The small size (2.2kB) and using vfork do spare some resources.
 Especially, when considering context switches for reaping subprocesses.
 (Everytime, a child process exits, there's a task switch to init,
 in order to "reap" the children's process state.
 Having a tiny init (or another subreaper process) has real and enduring performance advantages,
-also energy savings)
+also energy savings. 
+
+Having a statically linked init has further advantages. 
+(contigous memory, easy to setup in containers,..)
 
 Readahead could be implemented by the stages,
 but didn't speed up here. (Using 'lockfile' from minicore, ssd)
@@ -51,20 +66,20 @@ Atm, it is neglectible.
 
 
 
+##### Description of the boot process
 
-(2020/06)
-.. finished a first version of init, seems to work fine.
-
-Subject to change.
+(Subject to change, all logging is dumped to the console,
+..)
 
 For now, init starts 
 /etc/rinit/rd.boot
-whichruns all scripts in /etc/rinit/rc.boot, starting with 'B'.
+which runs all scripts in /etc/rinit/rc.boot, starting with 'B'.
 
 Afterwards, 
 /etc/rinit/rd.run runlevel
 is executed and all scripts in /etc/rinit/rc.runlevel,
 starting with 'B' are executed.
+
 B99Lazy waits for the file /tmp/runlazy,
 when this has been created (I touch it from the config file of i3),
 all scripts, starting with 'L', are executed in order.
@@ -78,11 +93,12 @@ on signals SIGINT, Ctrl+Alt+Del (->reboot) and SIGTERM (->shutdown)
 /etc/rinit/rd.run is sent SIGTERM, when not responding SIGKILL,
 and after it's termination
 /etc/rinit/3 is executed.
-
+`3` is currently a script, which scans /etc/rinit/rc.shutdown
+and executes all scripts starting with S.
 
 For a shutdown do "killall init",
 for a reboot "killall -s SIGINT init" (or Ctrl-Alt-Del)
-(Or use the programs 'halt' and 'reboot').
+(Or use the included programs 'halt' and 'reboot').
 
 When sent SIGQUIT, the currently running stage is signalled with SIGTERM.
 When the currently running stages are either 1 or 2, when the processes exit,
@@ -110,8 +126,18 @@ it is yet mainly there to keep a login at tty1 open.
 I leave this as it is for now.
 
 
+##### Unfinished stuff
 
-notes
+No proper install.
+
+busybox isn't included, 
+yet it doesn't compile with minilib.
+
+Not possible yet to include other init systems.
+Just plain shell scripts.
+
+
+##### notes
 
 Seems to me, a modular kernel would be advantegeous in matters of boottime.
 
@@ -119,7 +145,7 @@ the modules can initialize the hardware in parallel to the boot process.
 
 (Now, the kernel needs about x seconds to initialize here)
 
-Ok. Mdularizing the kernel, and loading
+Ok. Modularizing the kernel, and loading
 all modules in parallel saves a lot of time.
 
 
@@ -141,18 +167,6 @@ daemonized.
 
 
 ---- 
-
-
-Executables within rinit/rc.boot are 
-executed first.
-
-Then follows rc.runlevel (default: rc.default)
-
-On Shutdown rc.shutdown is scanned.
- / rc.default/S\* (S for shutdown)
-
-
-rinit.boot is there for rc.boot.
 
 
 
@@ -216,21 +230,6 @@ I didn't find the cause yet. But might be some dark magic somewhere.
 
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-Also add information on how to contact you by electronic and paper mail.
-
-  If your software can interact with users remotely through a computer
-network, you should also make sure that it provides a way for users to
-get its source.  For example, if your program is a web application, its
-interface could display a "Source" link that leads users to an archive
-of the code.  There are many ways you could offer source, and different
-solutions will be better for different programs; see section 13 for the
-specific requirements.
-
-  You should also get your employer (if you work as a programmer) or school,
-if any, to sign a "copyright disclaimer" for the program, if necessary.
-For more information on this, and how to apply and follow the GNU AGPL, see
-<https://www.gnu.org/licenses/>.
 
 
 Based on minilib,
