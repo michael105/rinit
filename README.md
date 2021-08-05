@@ -10,7 +10,7 @@ I'm using this init however myself for more than one year.
 I guess, I'm finish this when I'm happy with the minimal linux system
 I'm working at.
 
-
+Might currently only compile with gcc 9.3. Other versions not tested by me.
 
 
 #### A minimal init. 
