@@ -7,10 +7,11 @@ the init scripts are subject to changes.
 
 I'm using this init however myself for more than one year.
 
-I guess, I'm finish this when I'm happy with the minimal linux system
+I guess, I finish this when I'm happy with the minimal linux system
 I'm working at.
 
-Might currently only compile with gcc 9.3. Other versions not tested by me.
+Might currently only compile with gcc 9.3 or clang 11.0. 
+Only gcc 9.3 (Gentoo) has been tested by me.
 
 
 #### A minimal init. 
@@ -25,7 +26,7 @@ Albite most of the startup time is needed by the bios (maybe 3seconds here),
 I'm still aiming at 1 second from grub to a running Xserver including the desktop environment.
 
 
-shutdown maybe 1/10 seconds. 
+shutdown maybe 1/10 second. 
 (terminating a list of programs like vi, to save data to disk,
 and unmounting mounts)
 
@@ -65,7 +66,6 @@ to measure the script parsing overhead.
 Atm, it is neglectible.
 
 
-
 ##### Description of the boot process
 
 (Subject to change, all logging is dumped to the console,
@@ -86,7 +86,7 @@ all scripts, starting with 'L', are executed in order.
 
 Halt/reboot is /etc/rinit/3
 
-The stages name's are defined in config.h
+The stages' names are defined in config.h
 
 
 on signals SIGINT, Ctrl+Alt+Del (->reboot) and SIGTERM (->shutdown)
@@ -133,7 +133,8 @@ No proper install.
 busybox isn't included, 
 yet it doesn't compile with minilib.
 However the sh of busybox has the big advantage of 
-having most external programs included.
+having most external programs included,
+sparing the fork to execute commands in the scripts.
 
 Not possible yet to include other init systems.
 Just plain shell scripts.
@@ -182,6 +183,7 @@ when the runlevel is changed,
  rinit.run writes into it's own argument the new runlevel.
  (so the current runlevel shows up with ps)
 
+(Not yet) 
 On SIGUSR1 the runlevel should be read from the shared directory within the init ramdisk,
 and changed to, when needed.
  (/rd/run/runlevel)
