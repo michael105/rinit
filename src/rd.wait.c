@@ -16,15 +16,15 @@ return
 #include "config.h"
 
 void usage(){
-		writes("Usage: rd.wait service\n");
-		writes("Wait until 'service' has been started\n");
-		exit(1);
+	writes("Usage: rd.wait service\n");
+	writes("Wait until 'service' has been started\n");
+	exit(1);
 }
 
 int main(int argc, char *argv[]){
-		if (argc < 2) {
-				usage();
-		}
+	if (argc < 2) {
+		usage();
+	}
 	char fn[256]; 
 	strcpy(fn,SERVICEPATH);
 	strlcpy(fn+sizeof(SERVICEPATH)-1,argv[1],256-sizeof(SERVICEPATH));
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 	int fd = open( fn, O_RDWR|O_CREAT, 0664 );
 
 	if ( fd<0 ){
-			exit_errno(fd);
+		exit_errno(fd);
 	}
 
 	char b[1];
@@ -42,24 +42,24 @@ int main(int argc, char *argv[]){
 
 	r = read(fd,b,1);
 	if ( r > 0 )
-			return(0);
+		return(0);
 
 	int nfd; // inotifyfd
 	nfd = inotify_init();
 	if ( nfd<0 ){
-			exit_errno(nfd);
+		exit_errno(nfd);
 	}
 
 	int ir = inotify_add_watch(nfd, fn, IN_MODIFY );
 
 	if ( ir<0 ){
-			exit_errno(ir);
+		exit_errno(ir);
 	}
 
 	while ( r == 0 ){
-			usleep(100000); // 1/10 second
-			read(nfd,buf,64);
-			r = read(fd,b,1);
+		usleep(100000); // 1/10 second
+		read(nfd,buf,64);
+		r = read(fd,b,1);
 	}
 
 	return(0);

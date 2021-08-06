@@ -27,15 +27,15 @@ return
 #include "config.h"
 
 void usage(){
-		writes("Usage: rd.note service\n");
-		writes("Announce 'service' has been started\n");
-		exit(1);
+	writes("Usage: rd.note service\n");
+	writes("Announce 'service' has been started\n");
+	exit(1);
 }
 
 int main(int argc, char *argv[]){
-		if (argc < 2) {
-				usage();
-		}
+	if (argc < 2) {
+		usage();
+	}
 	char fn[256]; 
 	strcpy(fn,SERVICEPATH);
 	strlcpy(fn+sizeof(SERVICEPATH)-1,argv[1],256-sizeof(SERVICEPATH));
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
 	int fd = open( fn, O_RDWR|O_CREAT, 0664 );
 
 	if ( fd<0 ){
-			exit_errno(fd);
+		exit_errno(fd);
 	}
 	write(fd,"1",1);
 

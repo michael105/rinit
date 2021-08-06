@@ -191,8 +191,8 @@ int main(int argc, char **argv, char **envp){
 	sa.sa_handler = sighandler;
 
 	if ( sigaction (SIGTERM, &sa, 0) ||
-		  sigaction (SIGQUIT, &sa, 0) ||
-		  sigaction (SIGINT, &sa, 0) ){
+			sigaction (SIGQUIT, &sa, 0) ||
+			sigaction (SIGINT, &sa, 0) ){
 		error("Couldn't install signal handler");
 		// try to continue anyways.
 	}
@@ -263,6 +263,6 @@ int main(int argc, char **argv, char **envp){
 		// ( shutdown == 0 )
 	}; // shutdown aborted. start with stage1 again
 
-	return(0); // silence compiler warning
+	__builtin_unreachable(); // silence compiler warning
 }
 
