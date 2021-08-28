@@ -1,6 +1,6 @@
 # Makefile for minilib
 # 
-# call with 'make -f Makefile.minilib [CONF=configfile.conf] [BUILD=binaryname]'
+# call with 'make -f Makefile.minilib [CONF=configfile.conf] BUILD=binaryname'
 #
 # When minilib.h is not present,
 # it will be downloaded from github. (100kB gzipped)
@@ -66,6 +66,7 @@ urlbase := "https://raw.githubusercontent.com/michael105/minilib/download"
 
 fetch = $(shell ((curl $(urlbase)/$(VERSION)/$(1).gz > $(1).gz) || (wget $(urlbase)/$(VERSION)/$(1).gz)) && gunzip $(1).gz)
 	
+SELF = $(lastword $(MAKEFILE_LIST))
 
 #$(info Using config: $(CONF))
 
@@ -83,7 +84,7 @@ default: $(BUILDDIR) minilib.h
 	echo LDSCRIPT: $$LDSCRIPT
 	echo generate $(BUILDDIR)/$(CONF).ldscript
 	#echo $($$VAR) > $(BUILDDIR)/$(CONF).ldscript || exit 1
-	cat Makefile.minilib | sed -n "/ldscripts\/ld.script.$$LDSCRIPT/,/endef/p" | sed '1d;/endef/Q' > $(BUILDDIR)/$(CONF).ldscript || exit 1
+	cat $(SELF) | sed -n "/ldscripts\/ld.script.$$LDSCRIPT/,/endef/p" | sed '1d;/endef/Q' > $(BUILDDIR)/$(CONF).ldscript || exit 1
 	echo compile $(SOURCES) to $(BUILD)
 	echo $(CC) -include "$(BUILDDIR)/$(CONF).h" -include $$MINILIB $$OPTFLAG $$STRIPFLAG \
        $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript $(SOURCES) -o $$BINARY
@@ -106,7 +107,7 @@ check:
 	$(sha256sums)
 	ENDL
 	#> sign.tmp
-	sed '/^#sha256sums/q' Makefile.minilib | sha256sum -c sign.tmp
+	sed '/^#sha256sums/q' $(SELF) | sha256sum -c sign.tmp
 
 
 $(BUILDDIR):
@@ -143,7 +144,7 @@ SHOWSOURCES Set to 1 to save all combined sources into the outputfile
 
 (c) 2019-2021 Michael misc Myer. All rights reserved.
 Free to use with attribution
-'make -f Makefile.minilib license' shows the license
+'make -f $(SELF) license' shows the license
 
 endef
 
