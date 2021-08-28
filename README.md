@@ -3,6 +3,7 @@ work in progress, not finished.
 Documentation needs to be (re)written,
 the init scripts are subject to changes.
 
+Only tested with gcc 9.3.0.
 
 
 I'm using this init however myself for more than one year.
