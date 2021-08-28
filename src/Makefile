@@ -1,35 +1,20 @@
-MCC=../mini-gcc
-APPEND="-DPWD=${PWD}"
+
+BINARIES := rinit.run rinit.boot reboot halt init rd.note rd.wait
+CONF := minilib.conf
 
 
-src = rinit.run rinit.boot reboot halt init rd.note rd.wait
-OPT=--config minilib.conf
 
-all: $(src) 
+
+
+all: $(BINARIES)
+
+
 
 %: %.c config.h
-	$(eval OPT=--config $@.c)
-	$(if $(wildcard $@.mconf),$(eval OPT=--config $@.mconf),)
-	$(if $(wildcard $@.conf),$(eval OPT=--config $@.conf),)
-	@echo -e "\e[36m" $(MCC) $(OPT) -o $@ $@.c"\e[37m"
-	@$(MCC) $(OPT) -o $@ $@.c ${APPEND}
-
-rinit.run: rinit.run.c common.c config.h
-	$(eval OPT=--config $@.c)
-	$(MCC) $(OPT) -o rinit.run rinit.run.c
-
-rinit.boot: rinit.boot.c common.c config.h
-	$(eval OPT=--config $@.c)
-	$(MCC) $(OPT) -o rinit.boot rinit.boot.c
+	make -f Makefile.minilib BUILD=$@
 
 
-reboot: reboot.c
-		$(MCC) --shrinkelf --config reboot.c -o reboot reboot.c
+clean:
+	rm $(BINARIES)
 
-halt: halt.c
-		$(MCC) --shrinkelf --config halt.c -o halt halt.c
-
-install: init
-	sudo mv /sbin/init /sbin/init.bak2
-	sudo cp init /sbin/init
 

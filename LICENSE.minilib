@@ -27,17 +27,18 @@ which I`d like to name "Fair use with attribution".
 License
 
    The terms `minilib`, `source code`, `redistribution` or `linked with`
-   apply to the minilib in full as well as to parts of minilib
+   apply to the minilib in full as well as to parts of minilib.
   
-   All files belonging to this project are subject to this license,
-   besides files, where within the header explicitely other licensing terms are noted
+   All files belonging to this project are subject to this license, besides 
+   files, where within the header explicitely other licensing terms are noted.
     
-   Michael (misc) Myer is a Pseudonym. When your local laws don`t permit usage of pseudonyms,
-   one of the conditions below would be not legal, or you do not comply to this license,
-   you may neither use minilib nor parts of this project.
-   The author is under this condition still the owner of this software.
-   Please contact me for differing licensing terms in this case,
-   and explain your situation
+   Michael (misc) Myer is a Pseudonym. 
+   When your local laws don`t permit usage of pseudonyms, this license 
+   or one of its sentences would be not legal, or you do not comply
+   to this license, you may neither use minilib nor parts of this project.
+   The author is under this condition still the owner and copyright holder 
+   of this software. Please contact me for different licensing terms 
+   in this case, and explain your situation.
   
 
 Redistribution, use and derived works in source and binary forms, with or without
@@ -57,11 +58,11 @@ modification, are permitted provided that the following conditions are met:
 
  * Applications and software linked with, or derived from minilib must 
    in addition reproduce one of the according full notices below for derived or 
-	 linked works within a documentation accessible at runtime:
+   linked works within a documentation accessible at runtime:
    - `--help` documentation
    - online manual for web applications
    - Alternatively within a for every user clearly visible and
-	   readable message at the application startup
+     readable message at the application startup
  
  * Software and applications without a textual or graphical user interface
    linked with, or derived from minilib must 
@@ -69,14 +70,10 @@ modification, are permitted provided that the following conditions are met:
    the file NOTICE, this list of conditions and the following disclaimer in 
    the documentation and all other materials like advertisements, 
    manuals, datasheets, etc.
-	 
+ 
  * Neither the name of the minilib nor the
    names of its contributors may be used to endorse or promote products
    derived from this software without specific prior written permission
-  
- * You inform me with an email with the subject `minilib usage` 
-   about your usage of minilib and agree to a possible announcement 
-	 with your and/or your companie`s name at the homepage of minilib
 
 
 Disclaimer:
@@ -95,7 +92,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 End of the license.
 
 
-Please contact me, if you are in need of differing licensing terms.
+Please contact me, if you are in need of other license terms.
 
 
 Notices:
@@ -124,36 +121,4 @@ All rights reserved.
 Some files in the folders headers and contrib have other licensing terms.
 Please look at the sources.
 
-
-(misc)
-
-
-Most files in the folder headers are defining the linux kernel interface
-and copied from musl.
-
-musl is licensed under the terms of the Standard MIT-License,
-see the file musl-LICENSE.
-
-
-The copied headers are from the include dir of musl,
-this section of musl`s licensing terms applies:
-
------
-In addition, permission is hereby granted for all public header files
-(include/* and arch/*/bits/*) and crt files intended to be linked into
-applications (crt/*, ldso/dlstart.c, and arch/*/crt_arch.h) to omit
-the copyright notice and permission notice otherwise required by the
-license, and to use these files without any requirement of
-attribution. These files include substantial contributions from:
-
-Bobby Bingham
-John Spencer
-Nicholas J. Kain
-Rich Felker
-Richard Pennington
-Stefan Kristiansson
-Szabolcs Nagy
-
-all of whom have explicitly granted such permission.
------
 
