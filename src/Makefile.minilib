@@ -5,7 +5,7 @@
 # When minilib.h is not present,
 # it will be downloaded from github. (100kB gzipped)
 # 
-# Dependencies: gcc|clang, sed
+# Dependencies: gcc or clang, sed
 # 
 # Minilib and the accompanying tools and scripts are licensed under a 
 # BSD-style opensource license with attribution.
@@ -52,7 +52,7 @@ ifndef $(BUILDDIR)
 endif
 
 ifndef $(SOURCES)
-	SOURCES:=$(CONF)
+	SOURCES:=$(BUILD).c
 endif
 
 ifndef $(LDSCRIPT)
@@ -93,12 +93,24 @@ default: $(BUILDDIR) minilib.h
          $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript $(SOURCES) -E -P),\
 		($(CC) -include "$(BUILDDIR)/$(CONF).h" -include $$MINILIB $$OPTFLAG $$STRIPFLAG \
          $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript $(SOURCES) -o $$BINARY ))
+	$(if $$opt_shrinkelf,echo shrinkelf $$BINARY)
+	$(if $$opt_shrinkelf,$(MAKE) -f $(SELF) $(BUILDDIR)/shrinkelf && $(BUILDDIR)/shrinkelf $$BINARY)
 
 
 minilib.h:
 	$(info Download minilib.h)
 	$(call fetch,minilib.h)
 	$(info Ok)
+
+
+$(BUILDDIR)/shrinkelf: minilib.h $(BUILDDIR)/shrinkelf.c $(BUILDDIR)/shrinkelf.mconf 
+	$(MAKE) -f $(SELF) default BUILD=$(BUILDDIR)/shrinkelf CONF=$(BUILDDIR)/shrinkelf.mconf BUILDDIR=.
+
+$(BUILDDIR)/shrinkelf.c: minilib.h
+	$(CC) -Dminilibcompiled_h -DSHRINKELF -E -P minilib.h > $(BUILDDIR)/shrinkelf.c
+
+$(BUILDDIR)/shrinkelf.mconf: minilib.h
+	$(CC) -Dminilibcompiled_h -DSHRINKELF_MCONF -E -P minilib.h > $(BUILDDIR)/shrinkelf.mconf
 
 
 check:

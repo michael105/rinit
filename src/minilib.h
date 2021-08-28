@@ -17678,4 +17678,11 @@ err("Unkown error renaming %s %s %s", tmpname, " into ", oldname) ;
 return 0 ;
 }
 #endif
+#ifdef SHRINKELF_MCONF
+mini_buf 4096
+mini_start
+INCLUDESRC
+COMPILE close dup2 fprintf itodec fputc free fstat lseek malloc memcmp memcpy
+COMPILE open read rename strcpy strlen unlink write errno exit raise itodec
+#endif
 #endif
