@@ -4,10 +4,7 @@ CONF := minilib.conf
 
 
 
-
-
 all: $(BINARIES)
-
 
 
 %: %.c config.h
@@ -17,4 +14,6 @@ all: $(BINARIES)
 clean:
 	rm $(BINARIES)
 
+update-bin: $(BINARIES)
+	cp $(BINARIES) ../bin/
 
