@@ -30,7 +30,7 @@
 # Michael (misc) Myer, 2012-2021
 #
 
-VERSION:="20210827"
+VERSION:="20210828"
 
 $(info Build:$(BUILD) Conf:$(CONF))
 
@@ -2028,6 +2028,6 @@ SECTIONS {
 endef
 #sha256sums
 define sha256sums =
-c1d407783a6aecd3e0ea633aa029762dbe466a938ad364b819021d1c09876757  -
-d66659cd4da16de628ba7d10c14a398d2063376f4d291fd4cf374c9fe382fb1f  minilib.h
+16075ace995965a86038fc547d5eb4ddd9886dc41de8416b5c2a739e6fb91f18  -
+3223739d2279790c8526c84a73b5e1987c9b605a063c60faaef90c6f1baa5198  minilibcompiled.h
 endef
