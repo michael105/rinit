@@ -73,10 +73,9 @@ fetch = $(shell ((curl $(urlbase)/$(VERSION)/$(1).gz > $(1).gz) || (wget $(urlba
 .ONESHELL:
 default: $(BUILDDIR) minilib.h
 	@echo Using config $(CONF)
-	@echo generate $(BUILDDIR)/$(CONF).h
+	echo generate $(BUILDDIR)/$(CONF).h
 	BINARY=$(BUILD)
 	MINILIB=minilib.h
-	#MINILIB=$(shell if [ -e "$(BUILDDIR)/minilibcompiled.h" ]; then echo -n "$(BUILDDIR)/minilibcompiled.h";else echo -n "$(BUILDDIR)/minilib.h";fi)
 	echo use header: $$MINILIB
 	source $(defaultvalues)
 	source $(genconfig)
@@ -86,12 +85,12 @@ default: $(BUILDDIR) minilib.h
 	echo "$(ldscripts/ld.script.default)" > $(BUILDDIR)/$(CONF).ldscript || exit 1
 	echo compile $(SOURCES) to $(BUILD)
 	echo $(CC) -include "$(BUILDDIR)/$(CONF).h" -include $$MINILIB $$OPTFLAG $$STRIPFLAG \
-       $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript -o $(BINARY) $(SOURCES)
+       $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript $(SOURCES) -o $$BINARY
 	$(if $(SHOWSOURCE),\
 		($(CC) -include "$(BUILDDIR)/$(CONF).h" -include $$MINILIB $$OPTFLAG $$STRIPFLAG \
-         $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript $$SOURCES -E -P),\
-      ($(CC) -include "$(BUILDDIR)/$(CONF).h" -include $$MINILIB $$OPTFLAG $$STRIPFLAG \
-         $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript -o $(BINARY) $(SOURCES)))
+         $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript $(SOURCES) -E -P),\
+		($(CC) -include "$(BUILDDIR)/$(CONF).h" -include $$MINILIB $$OPTFLAG $$STRIPFLAG \
+         $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript $(SOURCES) -o $$BINARY ))
 
 
 minilib.h:
