@@ -82,7 +82,8 @@ default: $(BUILDDIR) minilib.h
 	source $(CONF) > $(BUILDDIR)/$(CONF).h || exit 1
 	echo LDSCRIPT: $$LDSCRIPT
 	echo generate $(BUILDDIR)/$(CONF).ldscript
-	echo "$(ldscripts/ld.script.default)" > $(BUILDDIR)/$(CONF).ldscript || exit 1
+	#echo $($$VAR) > $(BUILDDIR)/$(CONF).ldscript || exit 1
+	cat Makefile.minilib | sed -n "/ldscripts\/ld.script.$$LDSCRIPT/,/endef/p" | sed '1d;/endef/Q' > $(BUILDDIR)/$(CONF).ldscript || exit 1
 	echo compile $(SOURCES) to $(BUILD)
 	echo $(CC) -include "$(BUILDDIR)/$(CONF).h" -include $$MINILIB $$OPTFLAG $$STRIPFLAG \
        $$CFLAGS,-T$(BUILDDIR)/$(CONF).ldscript $(SOURCES) -o $$BINARY
