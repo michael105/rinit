@@ -17,11 +17,13 @@ Only gcc 9.3 (Gentoo) has been tested by me.
 
 #### A minimal init. 
 
-progress: boottime is around 2 seconds from grub to the fully up and running system,
+progress: boottime is around 4 seconds from grub to the fully up and running system,
 running Xorg, i3, http proxy server, ssh server, dns proxy, separation into several containers,
 and kerberos. (kerberos for gaining root/sudo, the default user is 'autologged' in)
-
-(15 year old notebook, amd turion 2GHz, ssd)
+Currently waiting for the USB bus to initialize,
+and starting Xorg takes most time. 
+But it is work in progress..
+(15 year old notebook, Thinkpad t61 with a ssd)
 
 Albite most of the startup time is needed by the bios (maybe 3seconds here),
 I'm still aiming at 1 second from grub to a running Xserver including the desktop environment.
@@ -29,14 +31,14 @@ I'm still aiming at 1 second from grub to a running Xserver including the deskto
 
 shutdown maybe 1/10 second. 
 (terminating a list of programs like vi, to save data to disk,
-and unmounting mounts)
+unmounting the harddisk,but leaving other programs running)
 
 
 
 ##### About
 
-Only one dependency for the static builds.
-I include minilib (www.github.com/michael105/minilib) as the combined script mini-gcc.
+The only "dependency" minilib.h is included.
+(www.github.com/michael105/minilib)
 
 The small size (2.2kB) and using vfork do spare some resources.
 Especially, when considering context switches for reaping subprocesses.
@@ -57,7 +59,7 @@ Atm the kernel's init phase takes most time.
 However, I'd like to have the system ready within <1 second.
 (Ready in the meaning of, the X server is started and ready for input)
 
-Yet this might be around 3 seconds, maybe five.
+Yet this might be around 4 seconds, maybe five.
 
 Harddisk mounts, and module loads are done in the background,
 after X and the desktop manager(i3) has been started.
