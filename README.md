@@ -22,7 +22,8 @@ running Xorg, i3, http proxy server, ssh server, dns proxy, separation into seve
 and kerberos. (kerberos for gaining root/sudo, the default user is 'autologged' in)
 Currently waiting for the USB bus to initialize,
 and starting Xorg takes most time. 
-But it is work in progress..
+I did already have a responsible system within about 2 seconds,
+but it is work in progress.
 (15 year old notebook, Thinkpad t61 with a ssd)
 
 Albite most of the startup time is needed by the bios (maybe 3seconds here),
