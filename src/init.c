@@ -1,4 +1,4 @@
-#if 0
+#ifdef mlconfig
 # minilib configuration
 
 COMPILE start,writes,vfork,execve,sleep,exit,waitpid,prints,printsl,sigaction,\
@@ -7,9 +7,12 @@ COMPILE start,writes,vfork,execve,sleep,exit,waitpid,prints,printsl,sigaction,\
 # debugging definitions
 # COMPILE printf,itodec; mini_buf 256
 
-#LDSCRIPT text_and_bss
+# GLOBALS onstack
+
+LDSCRIPT textonly
+
 SHRINKELF
-INCLUDESRC
+
 return
 #endif
 
@@ -17,7 +20,7 @@ return
  misc 2020/06
 
 		rinit init tools
-    Copyright (C) 2020,2021  Michael (misc) Myer
+    Copyright (C) 2020-2025  Michael (misc) 
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -35,8 +38,8 @@ return
 
 
 Based on minilib,
-Copyright (c) 2012-2021, Michael (misc) Myer
-(misc.myer@zoho.com, www.github.com/michael105)
+Copyright (c) 2012-2025, Michael (misc) 
+(www.github.com/michael105)
 Donations welcome: Please contact me.
 All rights reserved.
 The licensing terms of minilib are in the file LICENSE.minilib.
@@ -79,9 +82,32 @@ The licensing terms of minilib are in the file LICENSE.minilib.
  
 #include "config.h"
 
+/*
 int shutdown;
 int stagepid;
 int zombie;
+*/
+
+
+typedef struct _t_globals { int shutdown; int stagepid; int zombie; } t_globals;
+
+static inline __seg_fs t_globals* __attribute__((always_inline,no_instrument_function))GLOBAL(){
+	return(0);
+}
+
+static void __attribute__((no_instrument_function))setglobals(t_globals* ml){
+	arch_prctl(ARCH_SET_FS,ml);
+}
+#ifdef GLOBALS
+#undef GLOBALS
+#endif
+
+#define GLOBALS GLOBAL()
+
+//#define shutdown GLOBALS->shutdown;
+//#define stagepid GLOBALS->stagepid;
+//#define zombie GLOBALS->zombie;
+
 
 // log functions
 void _log(const char *pref, const char *msg){
@@ -111,15 +137,15 @@ void settimer(int secs){
 // handle shutdown and reboot
 void sighandler(int signal){
 	if ( signal == SIGTERM ){
-		shutdown = 1; // halt
+		GLOBALS->shutdown = 1; // halt
 		log("Shutdown");
 	}
 	if ( signal == SIGINT ){
-		shutdown = 2; // reboot
+		GLOBALS->shutdown = 2; // reboot
 		log("Reboot");
 	}
 
-	kill(stagepid,SIGTERM);
+	kill(GLOBALS->stagepid,SIGTERM);
 
 	// set a timer, 
 	// and kill the curent stage, 
@@ -129,13 +155,13 @@ void sighandler(int signal){
 
 // timeout after signalling the currently running stage
 void sigalarm(int signal){
-	if ( shutdown ){
+	if ( GLOBALS->shutdown ){
 		warning("Shutdown: timeout reached. Send kill.");
-		kill(stagepid, SIGKILL);
-		if ( zombie == stagepid ){ // stage process hangs, didn't respond to sigkill
+		kill( GLOBALS->stagepid, SIGKILL);
+		if ( GLOBALS->zombie == GLOBALS->stagepid ){ // stage process hangs, didn't respond to sigkill
 			raise(SIGTERM); // kill ourselves / meaning continue in vexec, waitpid
 		}
-		zombie = stagepid; // save stagepid.
+		GLOBALS->zombie = GLOBALS->stagepid; // save stagepid.
 		settimer(WAITTIME); // when the stage process doesn't respond to the sigkill,
 		// kill ourselves after "waittime"
 	}
@@ -143,19 +169,19 @@ void sigalarm(int signal){
 
 // abort a shutdown
 void sigabrt(int signal){
-	if ( shutdown ){
-		shutdown = 0;
+	if ( GLOBALS->shutdown ){
+		GLOBALS->shutdown = 0;
 		warning("Abort shutdown");
-		kill(stagepid, SIGABRT);
+		kill(GLOBALS->stagepid, SIGABRT);
 	}
 }
 
 // execute 'exec' and wait for it's termination
 // reap all children
 int vexec( const char* exec, char* const* argv, char* const* envp ){
-	stagepid = vfork();
+	GLOBALS->stagepid = vfork();
 
-	if ( stagepid == 0 ){
+	if ( GLOBALS->stagepid == 0 ){
 		execve(exec, argv, envp );
 		error("Couldn't execute");
 		error(exec);
@@ -168,18 +194,22 @@ int vexec( const char* exec, char* const* argv, char* const* envp ){
 	// the main loop, while running a stage ( pid != stagepid )
 	do {
 		pid = waitpid( -1, &ws, 0 ); // wait for any child (reap zombies)
-	} while ( !( ( (pid == stagepid) && (WIFEXITED(ws) || WIFSIGNALED(ws) ) ) || zombie ) );
+	} while ( !( ( (pid == GLOBALS->stagepid) && (WIFEXITED(ws) || WIFSIGNALED(ws) ) ) || GLOBALS->zombie ) );
 
 	return(0);
 }
 
 
 
-int main(int argc, char **argv, char **envp){
+int __attribute__((used)) main(int argc, char **argv, char **envp){
+	//IMPLEMENT_GLOBALS( globals );
+	t_globals globals = {0};
+	/*
 	// setup 
-	shutdown = 0;
-	stagepid = 0;
-	zombie = 0;
+	GLOBALS->shutdown = 0;
+	GLOBALS->stagepid = 0;
+	GLOBALS->zombie = 0;
+	*/
 
 	log("start init");
 
@@ -212,7 +242,7 @@ int main(int argc, char **argv, char **envp){
 
 	while (1){
 		// stage 1
-		zombie = 0;
+		GLOBALS->zombie = 0;
 		log("Run " STAGE1);
 		vexec( STAGE1, argv, envp );
 
@@ -220,7 +250,7 @@ int main(int argc, char **argv, char **envp){
 		char *st2av[3] = { STAGE2, "                ",0 };
 
 		// stage 2
-		while (!shutdown){
+		while (!GLOBALS->shutdown){
 			log("Run " STAGE2);
 			vexec(STAGE2, st2av, envp);
 			if ( (a++) > 1 ){ // prevent spinning 
@@ -231,21 +261,21 @@ int main(int argc, char **argv, char **envp){
 		};
 
 		// stage 3
-		if ( shutdown==1 )
+		if ( GLOBALS->shutdown==1 )
 			log("Shutdown");
 		else
 			log("Reboot");
 
 		log("Run " STAGE3);
 		settimer(WAITTIME);
-		zombie = 0;
+		GLOBALS->zombie = 0;
 		vexec(STAGE3, argv, envp);
 
 		log("Sync remaining file systems");
 		sync();
 
 		// shutdown
-		if ( shutdown == 1 ){
+		if ( GLOBALS->shutdown == 1 ){
 			log("Power off");
 			sync();
 			sync();
@@ -253,7 +283,7 @@ int main(int argc, char **argv, char **envp){
 			reboot(LINUX_REBOOT_MAGIC1,LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_HALT,0);
 		}
 
-		if ( shutdown == 2 ){
+		if ( GLOBALS->shutdown == 2 ){
 			log("Reboot");
 			sync();
 			sync();
