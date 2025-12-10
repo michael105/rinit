@@ -127,11 +127,11 @@ void ___log(const char *pref, int preflen, const char *msg, int msglen){
 #define __log(_pref,_msg,_len) ___log(_pref,sizeof(_pref),_msg,_len)
 
 void _error(const char *msg,int len){
-	__log( COLOR_ERROR "init - error: ", msg, len );
+	__log( COLOR_ERROR "--- init: ERROR: ", msg, len );
 }
 
 void _warning(const char *msg, int len){
-	__log( COLOR_WARNING "init - warning: ", msg, len );
+	__log( COLOR_WARNING "--- init: WARNING: ", msg, len );
 }
 
 void _log(const char *msg, int len){
@@ -212,7 +212,9 @@ int vexec( const char* exec, char* const* argv, char* const* envp ){
 	// the main loop, while running a stage ( pid != stagepid )
 	do {
 		pid = waitpid( -1, &ws, 0 ); // wait for any child (reap zombies)
-	} while ( !( ( (pid == GLOBALS->stagepid) && (WIFEXITED(ws) || WIFSIGNALED(ws) ) ) || GLOBALS->zombie ) );
+	} while ( !( 
+				( (pid == GLOBALS->stagepid) && (WIFEXITED(ws) || WIFSIGNALED(ws) ) ) 
+				|| GLOBALS->zombie ) );
 
 	return(0);
 }
@@ -223,7 +225,24 @@ int __attribute__((used)) main(int argc, char **argv, char **envp){
 
 	log("start init");
 
-	// initiate the three global vars
+	// shrink the stack, get rid of all environmental variables
+	// this spares about 100 kB of runtime memory usage
+	if ( *envp != 0 ){
+
+		struct rlimit rl = { 
+			.rlim_cur=INIT_STACKSIZE,
+			.rlim_max=INIT_STACKSIZE,
+		};
+
+		int ret = setrlimit(RLIMIT_STACK,&rl);
+		if ( ret==0 ){
+			log("process restart");
+			execve(*argv,argv,0);
+		}
+		error("self restart/setrlimit failed");
+	}
+
+	// allocate and initiate global vars
 	t_globals globals = {0};
 	setglobals(&globals);
 
@@ -294,14 +313,18 @@ int __attribute__((used)) main(int argc, char **argv, char **envp){
 			sync();
 			sync();
 			reboot(LINUX_REBOOT_MAGIC1,LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_POWER_OFF,0);
-			reboot(LINUX_REBOOT_MAGIC1,LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_HALT,0);
+			int ret = reboot(LINUX_REBOOT_MAGIC1,LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_HALT,0);
+			error("Shutdown failed");
+			exit(ERRNO(ret));
 		}
 
 		if ( GLOBALS->shutdown == 2 ){
 			log("Reboot");
 			sync();
 			sync();
-			reboot(LINUX_REBOOT_MAGIC1,LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART,0);
+			int ret = reboot(LINUX_REBOOT_MAGIC1,LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART,0);
+			error("Reboot failed");
+			exit(ERRNO(ret));
 		}
 
 		// ( shutdown == 0 )

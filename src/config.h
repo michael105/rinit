@@ -22,11 +22,17 @@
 #define SERVICEPATH "/rd/run/"
 
 
+// size of the stack of pid 1, env is removed, if present
+#define INIT_STACKSIZE 4*4096
 
-#if 0
-#define STAGE1 "/hd/sda8/home/micha/prog/minilib/minicore/rinit/test1.sh"
-#define STAGE2 "/hd/sda8/home/micha/prog/minilib/minicore/rinit/test2.sh"
-#define STAGE3 "/hd/sda8/home/micha/prog/minilib/minicore/rinit/test3.sh"
+
+
+#if 1
+#define STAGE1 "./teststage 1"
+#define STAGE2 "./teststage 30"
+#define STAGE3 "./teststage 5"
+//#define STAGE2 "/hd/sda8/home/micha/prog/minilib/minicore/rinit/test2.sh"
+//#define STAGE3 "/hd/sda8/home/micha/prog/minilib/minicore/rinit/test3.sh"
 #else
 #define STAGE1 "/etc/rinit/rinit.boot"
 #define STAGE2 "/etc/rinit/rinit.run"
@@ -42,6 +48,7 @@
 
 // ansi colors
 #define RED "\033[31m"
+#define YELLOW "\033[33;1m"
 #define NORM "\033[0;37m"
 
 #define COLOR_WARNING RED
