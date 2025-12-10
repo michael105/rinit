@@ -85,19 +85,19 @@ The licensing terms of minilib are in the file LICENSE.minilib.
  
 #include "config.h"
 
-/*
-int shutdown;
-int stagepid;
-int zombie;
-*/
 
-
+// global variables, they are placed at the stack and accessed via 
+// segment register fs.
+// we don't have any input at all, besides plain signals.
+// consequently, a buffer overflow just isn't possible.
 typedef struct { int shutdown; int stagepid; int zombie; } t_globals;
 
+// get segment register prefix
 static inline __seg_fs t_globals* __attribute__((always_inline,no_instrument_function))GLOBAL(){
 	return(0);
 }
 
+// set segment register
 static void __attribute__((no_instrument_function))setglobals(t_globals* ml){
 	arch_prctl(ARCH_SET_FS,ml);
 }
@@ -108,16 +108,10 @@ static void __attribute__((no_instrument_function))setglobals(t_globals* ml){
 
 #define GLOBALS GLOBAL()
 
-//#define shutdown GLOBALS->shutdown;
-//#define stagepid GLOBALS->stagepid;
-//#define zombie GLOBALS->zombie;
 
-
-// log functions
+// main log function
 void ___log(const char *pref, int preflen, const char *msg, int msglen){
-	//printsl(pref,NORM,msg);
 	char buf[preflen+sizeof(NORM)+msglen+4];
-	//char buf[128];
 
 	memcpy(buf,pref,preflen);
 	int e = preflen;
@@ -144,6 +138,7 @@ void _log(const char *msg, int len){
 	__log( COLOR_LOG "--- " NORM "init: ", msg, len );
 }
 
+// logging definitions with literal strings
 #define error(_msg) _error(_msg,sizeof(_msg))
 #define warning(_msg) _warning(_msg,sizeof(_msg))
 #define log(_msg) _log(_msg,sizeof(_msg))
@@ -225,17 +220,12 @@ int vexec( const char* exec, char* const* argv, char* const* envp ){
 
 
 int __attribute__((used)) main(int argc, char **argv, char **envp){
-	//IMPLEMENT_GLOBALS( globals );
-	t_globals globals = {0};
-	setglobals(&globals);
-	/*
-	// setup 
-	GLOBALS->shutdown = 0;
-	GLOBALS->stagepid = 0;
-	GLOBALS->zombie = 0;
-	*/
 
 	log("start init");
+
+	// initiate the three global vars
+	t_globals globals = {0};
+	setglobals(&globals);
 
 	// install signal handlers
 	struct sigaction sa;
