@@ -1,19 +1,13 @@
-#if 0
-mini_start
-mini_writes
-mini_open
-mini_read
-mini_exit_errno
+#ifdef mlconfig
 
-mini_strlcpy
-mini_strcpy
+COMPILE exit_errno strlcpy strcpy open
 
-HEADERGUARDS
 OPTFLAG -Os
 #STRIPFLAG
 #LDSCRIPT text_and_bss
-shrinkelf
-INCLUDESRC
+
+SHRINKELF
+
 return
 #endif
 
@@ -32,6 +26,7 @@ void usage(){
 	exit(1);
 }
 
+
 int main(int argc, char *argv[]){
 	if (argc < 2) {
 		usage();
@@ -46,7 +41,8 @@ int main(int argc, char *argv[]){
 		exit_errno(fd);
 	}
 	write(fd,"1",1);
+	close(fd);
 
-	return(0);
+	exit(0);
 }
 
