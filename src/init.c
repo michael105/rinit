@@ -1,17 +1,20 @@
 #ifdef mlconfig
 # minilib configuration
 
-COMPILE start,writes,vfork,execve,sleep,exit,waitpid,prints,printsl,sigaction,\
-			  sigaddset,sigemptyset,sigfillset,raise,setitimer,reboot,sync
+COMPILE start,writes,vfork,execve,sleep,exit,waitpid,\
+		  sigaction,sigaddset,sigemptyset,sigfillset,raise,setitimer,\
+		  reboot,sync,memcpy
 
 # debugging definitions
 # COMPILE printf,itodec; mini_buf 256
 
 # GLOBALS onstack
 
-LDSCRIPT textonly
+LDSCRIPT text_and_bss
 
-SHRINKELF
+STACK stacksize=512
+
+#SHRINKELF
 
 return
 #endif
@@ -89,7 +92,7 @@ int zombie;
 */
 
 
-typedef struct _t_globals { int shutdown; int stagepid; int zombie; } t_globals;
+typedef struct { int shutdown; int stagepid; int zombie; } t_globals;
 
 static inline __seg_fs t_globals* __attribute__((always_inline,no_instrument_function))GLOBAL(){
 	return(0);
@@ -98,6 +101,7 @@ static inline __seg_fs t_globals* __attribute__((always_inline,no_instrument_fun
 static void __attribute__((no_instrument_function))setglobals(t_globals* ml){
 	arch_prctl(ARCH_SET_FS,ml);
 }
+
 #ifdef GLOBALS
 #undef GLOBALS
 #endif
@@ -110,21 +114,40 @@ static void __attribute__((no_instrument_function))setglobals(t_globals* ml){
 
 
 // log functions
-void _log(const char *pref, const char *msg){
-	printsl(pref,NORM,msg);
+void ___log(const char *pref, int preflen, const char *msg, int msglen){
+	//printsl(pref,NORM,msg);
+	char buf[preflen+sizeof(NORM)+msglen+4];
+	//char buf[128];
+
+	memcpy(buf,pref,preflen);
+	int e = preflen;
+	memcpy(buf+e,NORM,sizeof(NORM));
+	e+=sizeof(NORM);
+	memcpy(buf+e,msg,msglen);
+	e+=msglen;
+	buf[e] = '\n';
+
+	write(1,buf,e+1);
 }
 
-void error(const char *msg){
-	_log( COLOR_ERROR "init - error: ", msg );
+#define __log(_pref,_msg,_len) ___log(_pref,sizeof(_pref),_msg,_len)
+
+void _error(const char *msg,int len){
+	__log( COLOR_ERROR "init - error: ", msg, len );
 }
 
-void warning(const char *msg){
-	_log( COLOR_WARNING "init - warning: ", msg );
+void _warning(const char *msg, int len){
+	__log( COLOR_WARNING "init - warning: ", msg, len );
 }
 
-void log(const char *msg){
-	_log( COLOR_LOG "--- " NORM "init: ", msg );
+void _log(const char *msg, int len){
+	__log( COLOR_LOG "--- " NORM "init: ", msg, len );
 }
+
+#define error(_msg) _error(_msg,sizeof(_msg))
+#define warning(_msg) _warning(_msg,sizeof(_msg))
+#define log(_msg) _log(_msg,sizeof(_msg))
+
 
 // set a timer, which calls sigalarm
 void settimer(int secs){
@@ -204,6 +227,7 @@ int vexec( const char* exec, char* const* argv, char* const* envp ){
 int __attribute__((used)) main(int argc, char **argv, char **envp){
 	//IMPLEMENT_GLOBALS( globals );
 	t_globals globals = {0};
+	setglobals(&globals);
 	/*
 	// setup 
 	GLOBALS->shutdown = 0;
