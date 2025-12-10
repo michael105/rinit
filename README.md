@@ -6,7 +6,7 @@ the init scripts are subject to changes.
 Tested only with gcc 9.3.0.
 
 
-I'm using this init however myself for more than one year.
+I'm using this init however myself for more than five years.
 
 I guess, I finish this when I'm happy with the minimal linux system
 I'm working at.
@@ -221,7 +221,7 @@ I didn't find the cause yet. But might be some dark magic somewhere.
 
 
 		rinit init tools
-    Copyright (C) 2020,2021  Michael (misc) Myer
+    Copyright (C) 2020,2021  Michael (misc) misc147
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -238,8 +238,8 @@ I didn't find the cause yet. But might be some dark magic somewhere.
 
 
 Based on minilib,
-Copyright (c) 2012-2021, Michael (misc) Myer
-(misc.myer@zoho.com, www.github.com/michael105)
+Copyright (c) 2012-2025, Michael (misc) misc147
+(www.github.com/michael105)
 Donations welcome: Please contact me.
 All rights reserved.
 The licensing terms of minilib are in the file LICENSE.minilib.
