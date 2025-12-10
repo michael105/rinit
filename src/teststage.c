@@ -1,6 +1,6 @@
 #ifdef mlconfig
 
-COMPILE printv prints itofmt memset sleep
+COMPILE printv prints itofmt memset sleep ltofmt
 
 
 return
@@ -17,6 +17,10 @@ int __attribute__((used))main(int argc,char*argv[],char*envp[]){
 	else 
 		writesl("*envp == 0");
 
+	struct rlimit rl;
+		
+	int ret = getrlimit(RLIMIT_STACK,&rl);
+		printvl("\ngetrlimit: ",ret,"\n  cur: ", rl.rlim_cur,"  max: ",rl.rlim_max );
 
 	int s = 0;
 	if ( argc > 1 ){

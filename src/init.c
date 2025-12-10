@@ -225,23 +225,41 @@ int __attribute__((used)) main(int argc, char **argv, char **envp){
 
 	log("start init");
 
+	
 	// shrink the stack, get rid of all environmental variables
 	// this spares about 100 kB of runtime memory usage
+	//
+	struct rlimit rl = { 
+		.rlim_cur=INIT_STACKSIZE,
+		.rlim_max=INIT_STACKSIZE
+	};
+
 	if ( *envp != 0 ){
 
-		struct rlimit rl = { 
-			.rlim_cur=INIT_STACKSIZE,
-			.rlim_max=INIT_STACKSIZE,
-		};
-
-		int ret = setrlimit(RLIMIT_STACK,&rl);
+		int ret = 0;
+		ret = setrlimit(RLIMIT_STACK,&rl);
 		if ( ret==0 ){
+			// there is no input, so there aren't any buffer ovflows possible,
+			// we can spare the random bytes at the stack
+			personality( ADDR_NO_RANDOMIZE );
 			log("process restart");
 			execve(*argv,argv,0);
 		}
-
 		error("self restart/setrlimit failed");
+	} 
+
+	// restore default personality and configurated stacksize 
+	// for started childs
+	rl.rlim_cur=CHILD_STACKSIZE_CUR;
+	rl.rlim_max=CHILD_STACKSIZE_MAX;
+
+	int ret = 0;
+	ret = setrlimit(RLIMIT_STACK,&rl);
+	if ( ret!=0 ){
+		warning("cannot set stacksize for children");
 	}
+
+	personality( 0 );
 
 	// allocate and initiate global vars
 	t_globals globals = {0};

@@ -25,12 +25,14 @@
 // size of the stack of pid 1, env is removed, if present
 #define INIT_STACKSIZE 4*4096
 
+#define CHILD_STACKSIZE_CUR 1024*256  // 256 kB
+#define CHILD_STACKSIZE_MAX 1024*1024*64  // 64MB
 
 
 #if 1
-#define STAGE1 "./teststage 1"
-#define STAGE2 "./teststage 30"
-#define STAGE3 "./teststage 5"
+#define STAGE1 "./teststage"
+#define STAGE2 "./teststage"
+#define STAGE3 "./teststage"
 //#define STAGE2 "/hd/sda8/home/micha/prog/minilib/minicore/rinit/test2.sh"
 //#define STAGE3 "/hd/sda8/home/micha/prog/minilib/minicore/rinit/test3.sh"
 #else
