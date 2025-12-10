@@ -239,6 +239,7 @@ int __attribute__((used)) main(int argc, char **argv, char **envp){
 			log("process restart");
 			execve(*argv,argv,0);
 		}
+
 		error("self restart/setrlimit failed");
 	}
 
